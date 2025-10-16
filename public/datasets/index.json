@@ -1,0 +1,79 @@
+{
+  "datasets": [
+    {
+      "id": "stack",
+      "name": "Stack Overflow",
+      "category": "Social Network",
+      "description": "Stack Overflow forum data with questions, answers, comments, votes, and user interactions",
+      "icon": "MessageSquare",
+      "tags": ["Q&A", "Community", "Temporal"],
+      "featured": true,
+      "code_path": "https://github.com/Zrealshadow/sharing-embedding-table/blob/main/utils/data/stack_dataset.py"
+    },
+    {
+      "id": "ratebeer",
+      "name": "RateBeer",
+      "category": "Recommendation",
+      "description": "Beer and brewery rating platform with user reviews, preferences, and geographic data",
+      "icon": "Beer",
+      "tags": ["Ratings", "Geographic", "User Behavior"],
+      "featured": true,
+      "code_path": "https://github.com/Zrealshadow/sharing-embedding-table/blob/main/utils/data/ratebeer_dataset.py"
+    },
+    {
+      "id": "olist",
+      "name": "Olist E-commerce",
+      "category": "E-commerce",
+      "description": "Brazilian e-commerce marketplace with orders, products, sellers, and customer reviews",
+      "icon": "ShoppingCart",
+      "tags": ["Orders", "Reviews", "Logistics"],
+      "featured": true,
+      "code_path": "https://github.com/Zrealshadow/sharing-embedding-table/blob/main/utils/data/olist_dataset.py"
+    },
+    {
+      "id": "event",
+      "name": "Meetup Events",
+      "category": "Social Network",
+      "description": "Event platform data with user attendance, interests, and social connections",
+      "icon": "Calendar",
+      "tags": ["Events", "Social", "Attendance"],
+      "featured": false
+    },
+    {
+      "id": "avito",
+      "name": "Avito Classifieds",
+      "category": "Advertising",
+      "description": "Russian classified ads platform with user clicks and ad engagement data",
+      "icon": "Megaphone",
+      "tags": ["Ads", "Clicks", "CTR"],
+      "featured": false
+    },
+    {
+      "id": "trial",
+      "name": "Clinical Trials",
+      "category": "Healthcare",
+      "description": "Clinical trial data with study outcomes, site performance, and adverse events",
+      "icon": "Activity",
+      "tags": ["Medical", "Research", "Outcomes"],
+      "featured": false
+    },
+    {
+      "id": "f1",
+      "name": "Formula 1",
+      "category": "Sports",
+      "description": "Formula 1 racing data with driver performance, race results, and team statistics",
+      "icon": "Zap",
+      "tags": ["Racing", "Performance", "Sports"],
+      "featured": false
+    },
+    {
+      "id": "amazon",
+      "name": "Amazon Reviews",
+      "category": "E-commerce",
+      "description": "Amazon product reviews and user behavior data for churn and lifetime value prediction",
+      "icon": "Package",
+      "tags": ["Reviews", "Churn", "LTV"],
+      "featured": false
+    }
+  ]
+}

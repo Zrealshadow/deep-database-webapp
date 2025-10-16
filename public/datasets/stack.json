@@ -1,0 +1,181 @@
+{
+  "id": "stack",
+  "name": "Stack Overflow",
+  "category": "Social Network",
+  "description": "Stack Overflow forum data with questions, answers, comments, votes, badges, and tag relationships. This dataset captures the rich interaction patterns in one of the largest programming Q&A communities.",
+  "source": "RelBench (Stanford)",
+  "download_url": "https://relbench.stanford.edu",
+  "code_path": "https://github.com/Zrealshadow/sharing-embedding-table/blob/main/utils/data/stack_dataset.py",
+  "num_tables": 9,
+  "total_rows": 50000000,
+  "val_timestamp": "2020-10-01",
+  "test_timestamp": "2021-01-01",
+  "temporal_coverage": {
+    "start": "2008-07-31",
+    "end": "2021-01-01",
+    "days": 4537
+  },
+  "tables": [
+    {
+      "name": "users",
+      "description": "User profiles and account information",
+      "num_rows": 5000000,
+      "num_columns": 8,
+      "primary_key": "Id",
+      "time_column": "CreationDate",
+      "foreign_keys": [],
+      "sample_columns": ["Id", "Reputation", "CreationDate", "DisplayName", "Views", "UpVotes", "DownVotes"]
+    },
+    {
+      "name": "posts",
+      "description": "Questions and answers with self-referential relationships",
+      "num_rows": 20000000,
+      "num_columns": 15,
+      "primary_key": "Id",
+      "time_column": "CreationDate",
+      "foreign_keys": [
+        {"column": "OwnerUserId", "references": "users.Id"},
+        {"column": "ParentId", "references": "posts.Id"},
+        {"column": "AcceptedAnswerId", "references": "posts.Id"}
+      ],
+      "sample_columns": ["Id", "PostTypeId", "Score", "ViewCount", "Body", "OwnerUserId", "CreationDate", "ParentId", "AcceptedAnswerId"]
+    },
+    {
+      "name": "comments",
+      "description": "Comments on questions and answers",
+      "num_rows": 15000000,
+      "num_columns": 6,
+      "primary_key": "Id",
+      "time_column": "CreationDate",
+      "foreign_keys": [
+        {"column": "UserId", "references": "users.Id"},
+        {"column": "PostId", "references": "posts.Id"}
+      ],
+      "sample_columns": ["Id", "PostId", "Score", "Text", "CreationDate", "UserId"]
+    },
+    {
+      "name": "votes",
+      "description": "User votes (upvotes, downvotes, favorites) on posts",
+      "num_rows": 8000000,
+      "num_columns": 5,
+      "primary_key": "Id",
+      "time_column": "CreationDate",
+      "foreign_keys": [
+        {"column": "PostId", "references": "posts.Id"},
+        {"column": "UserId", "references": "users.Id"}
+      ],
+      "sample_columns": ["Id", "PostId", "VoteTypeId", "CreationDate", "UserId"]
+    },
+    {
+      "name": "badges",
+      "description": "Achievement badges awarded to users",
+      "num_rows": 1500000,
+      "num_columns": 4,
+      "primary_key": "Id",
+      "time_column": "Date",
+      "foreign_keys": [
+        {"column": "UserId", "references": "users.Id"}
+      ],
+      "sample_columns": ["Id", "UserId", "Name", "Date"]
+    },
+    {
+      "name": "postLinks",
+      "description": "Links between related posts (duplicates, related questions)",
+      "num_rows": 300000,
+      "num_columns": 4,
+      "primary_key": "Id",
+      "time_column": "CreationDate",
+      "foreign_keys": [
+        {"column": "PostId", "references": "posts.Id"},
+        {"column": "RelatedPostId", "references": "posts.Id"}
+      ],
+      "sample_columns": ["Id", "PostId", "RelatedPostId", "LinkTypeId", "CreationDate"]
+    },
+    {
+      "name": "postHistory",
+      "description": "Edit history and modifications to posts",
+      "num_rows": 200000,
+      "num_columns": 7,
+      "primary_key": "Id",
+      "time_column": "CreationDate",
+      "foreign_keys": [
+        {"column": "PostId", "references": "posts.Id"},
+        {"column": "UserId", "references": "users.Id"}
+      ],
+      "sample_columns": ["Id", "PostId", "PostHistoryTypeId", "RevisionGUID", "CreationDate", "UserId", "Text"]
+    },
+    {
+      "name": "tags",
+      "description": "Tag reference table (augmented)",
+      "num_rows": 50000,
+      "num_columns": 2,
+      "primary_key": "Id",
+      "time_column": null,
+      "foreign_keys": [],
+      "sample_columns": ["Id", "TagName"],
+      "augmented": true
+    },
+    {
+      "name": "postTag",
+      "description": "Many-to-many relationship between posts and tags (augmented)",
+      "num_rows": 30000000,
+      "num_columns": 3,
+      "primary_key": "Id",
+      "time_column": null,
+      "foreign_keys": [
+        {"column": "PostId", "references": "posts.Id"},
+        {"column": "TagId", "references": "tags.Id"}
+      ],
+      "sample_columns": ["Id", "PostId", "TagId"],
+      "augmented": true
+    }
+  ],
+  "tasks": [
+    {
+      "id": "user-engagement",
+      "name": "User Engagement Prediction",
+      "task_type": "Binary Classification",
+      "description": "Predict whether a user will remain engaged in the community",
+      "entity_table": "users",
+      "target_col": "engaged",
+      "metrics": ["ROC-AUC", "Average Precision"],
+      "difficulty": "Medium",
+      "train_size": 250000,
+      "val_size": 50000,
+      "test_size": 50000
+    },
+    {
+      "id": "user-badge",
+      "name": "Badge Acquisition Prediction",
+      "task_type": "Binary Classification",
+      "description": "Predict if a user will earn a specific badge",
+      "entity_table": "users",
+      "target_col": "badge_acquired",
+      "metrics": ["ROC-AUC", "Average Precision"],
+      "difficulty": "Hard",
+      "train_size": 200000,
+      "val_size": 40000,
+      "test_size": 40000
+    },
+    {
+      "id": "post-vote",
+      "name": "Post Vote Prediction",
+      "task_type": "Regression",
+      "description": "Predict the number of votes a post will receive",
+      "entity_table": "posts",
+      "target_col": "vote_count",
+      "metrics": ["MAE", "RMSE"],
+      "difficulty": "Medium",
+      "train_size": 500000,
+      "val_size": 100000,
+      "test_size": 100000
+    }
+  ],
+  "statistics": {
+    "avg_posts_per_user": 4.0,
+    "avg_comments_per_post": 0.75,
+    "avg_votes_per_post": 0.4,
+    "most_common_tags": ["python", "javascript", "java", "c#", "php"],
+    "temporal_split_strategy": "3-month validation gap, 3-month test gap"
+  }
+}

@@ -1,0 +1,178 @@
+{
+  "id": "ratebeer",
+  "name": "RateBeer",
+  "category": "Recommendation",
+  "description": "Beer and brewery rating platform with user reviews, geographic distribution, venue availability, and user preferences. Includes comprehensive data about beers, brewers, ratings, and user behavior.",
+  "source": "Google Drive (Custom)",
+  "download_url": "https://drive.google.com/file/d/1r3e7T6kA-ImCCkIc029FHiMBj6QT8iF2/view?usp=sharing",
+  "num_tables": 9,
+  "total_rows": 15000000,
+  "val_timestamp": "2023-06-01",
+  "test_timestamp": "2024-06-01",
+  "temporal_coverage": {
+    "start": "2000-01-01",
+    "end": "2024-06-01",
+    "days": 8918
+  },
+  "tables": [
+    {
+      "name": "countries",
+      "description": "Geographic reference data for countries",
+      "num_rows": 200,
+      "num_columns": 3,
+      "primary_key": "country_id",
+      "time_column": null,
+      "foreign_keys": [],
+      "sample_columns": ["country_id", "country_name", "country_code"]
+    },
+    {
+      "name": "brewers",
+      "description": "Brewery information and profiles",
+      "num_rows": 50000,
+      "num_columns": 6,
+      "primary_key": "brewer_id",
+      "time_column": "created_at",
+      "foreign_keys": [
+        {"column": "country_id", "references": "countries.country_id"}
+      ],
+      "sample_columns": ["brewer_id", "brewer_name", "country_id", "created_at", "city", "state"]
+    },
+    {
+      "name": "beers",
+      "description": "Beer catalog with styles and attributes",
+      "num_rows": 500000,
+      "num_columns": 8,
+      "primary_key": "beer_id",
+      "time_column": "created_at",
+      "foreign_keys": [
+        {"column": "brewer_id", "references": "brewers.brewer_id"}
+      ],
+      "sample_columns": ["beer_id", "beer_name", "brewer_id", "style", "abv", "created_at", "retired", "avg_rating"]
+    },
+    {
+      "name": "places",
+      "description": "Venues and locations serving beers",
+      "num_rows": 30000,
+      "num_columns": 7,
+      "primary_key": "place_id",
+      "time_column": "created_at",
+      "foreign_keys": [
+        {"column": "country_id", "references": "countries.country_id"}
+      ],
+      "sample_columns": ["place_id", "place_name", "country_id", "city", "created_at", "place_type", "avg_rating"]
+    },
+    {
+      "name": "users",
+      "description": "User profiles and account creation data",
+      "num_rows": 1000000,
+      "num_columns": 5,
+      "primary_key": "user_id",
+      "time_column": "created_at",
+      "foreign_keys": [],
+      "sample_columns": ["user_id", "username", "created_at", "total_ratings", "country"]
+    },
+    {
+      "name": "beer_ratings",
+      "description": "User ratings and reviews of beers",
+      "num_rows": 10000000,
+      "num_columns": 10,
+      "primary_key": "rating_id",
+      "time_column": "created_at",
+      "foreign_keys": [
+        {"column": "beer_id", "references": "beers.beer_id"},
+        {"column": "user_id", "references": "users.user_id"}
+      ],
+      "sample_columns": ["rating_id", "beer_id", "user_id", "rating", "appearance", "aroma", "palate", "taste", "overall", "created_at"]
+    },
+    {
+      "name": "place_ratings",
+      "description": "User ratings of venues and bars",
+      "num_rows": 500000,
+      "num_columns": 6,
+      "primary_key": "rating_id",
+      "time_column": "created_at",
+      "foreign_keys": [
+        {"column": "place_id", "references": "places.place_id"},
+        {"column": "user_id", "references": "users.user_id"}
+      ],
+      "sample_columns": ["rating_id", "place_id", "user_id", "rating", "review_text", "created_at"]
+    },
+    {
+      "name": "availability",
+      "description": "Beer availability at specific venues",
+      "num_rows": 2000000,
+      "num_columns": 5,
+      "primary_key": "avail_id",
+      "time_column": "created_at",
+      "foreign_keys": [
+        {"column": "beer_id", "references": "beers.beer_id"},
+        {"column": "country_id", "references": "countries.country_id"},
+        {"column": "place_id", "references": "places.place_id"}
+      ],
+      "sample_columns": ["avail_id", "beer_id", "place_id", "country_id", "created_at"]
+    },
+    {
+      "name": "favorites",
+      "description": "Users' favorite beers",
+      "num_rows": 3000000,
+      "num_columns": 4,
+      "primary_key": "favorite_id",
+      "time_column": "created_at",
+      "foreign_keys": [
+        {"column": "beer_id", "references": "beers.beer_id"},
+        {"column": "user_id", "references": "users.user_id"}
+      ],
+      "sample_columns": ["favorite_id", "beer_id", "user_id", "created_at"]
+    }
+  ],
+  "tasks": [
+    {
+      "id": "user-active",
+      "name": "Active User Prediction",
+      "task_type": "Binary Classification",
+      "description": "Predict if a user will have 10+ ratings in the next 90 days",
+      "entity_table": "users",
+      "target_col": "is_active",
+      "metrics": ["ROC-AUC", "Average Precision"],
+      "difficulty": "Medium",
+      "train_size": 500000,
+      "val_size": 100000,
+      "test_size": 100000,
+      "positive_rate": 0.15
+    },
+    {
+      "id": "beer-positive",
+      "name": "Beer Positive Rate Prediction",
+      "task_type": "Regression",
+      "description": "Predict the positive rating rate (rating > 3.5) for beers in the next 180 days",
+      "entity_table": "beers",
+      "target_col": "positive_rate",
+      "metrics": ["MAE", "RMSE", "R²"],
+      "difficulty": "Hard",
+      "train_size": 200000,
+      "val_size": 40000,
+      "test_size": 40000
+    },
+    {
+      "id": "place-positive",
+      "name": "Place Positive Prediction",
+      "task_type": "Binary Classification",
+      "description": "Predict if a venue will have average rating > 75 in the next 180 days",
+      "entity_table": "places",
+      "target_col": "is_positive",
+      "metrics": ["ROC-AUC", "F1-Score"],
+      "difficulty": "Medium",
+      "train_size": 15000,
+      "val_size": 3000,
+      "test_size": 3000,
+      "positive_rate": 0.35
+    }
+  ],
+  "statistics": {
+    "avg_ratings_per_user": 10.0,
+    "avg_ratings_per_beer": 20.0,
+    "most_popular_styles": ["IPA", "Stout", "Lager", "Pale Ale", "Porter"],
+    "temporal_split_strategy": "1-year validation gap, 1-year test gap",
+    "geographic_coverage": "Global (200+ countries)"
+  }
+}

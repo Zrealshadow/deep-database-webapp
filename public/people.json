@@ -1,0 +1,24 @@
+{
+  "people": [
+    {
+      "id": "1",
+      "name": "Lingze",
+      "role": "PhD Candidate",
+      "category": "PhD Student",
+      "email": "lingze@comp.nus.edu.sg",
+      "website": "https://github.com/Zrealshadow",
+      "interests": ["Database Systems", "Machine Learning", "Graph Neural Networks"],
+      "bio": "Lingze is a PhD student focusing on the intersection of database systems and deep learning.",
+      "image": ""
+    },
+    {
+      "id": "2",
+      "name": "柳贯一",
+      "role": "PhD Student",
+      "category": "PhD Student",
+      "email": "guanyi@comp.nus.edu.sg",
+      "bio": "测试中文，这是一个测试，用于展示中文字符的显示效果。",
+      "interests": ["数据库系统", "机器学习"]
+    }
+  ]
+}

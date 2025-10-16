@@ -1,0 +1,26 @@
+{
+  "publications": [
+    {
+      "id": "1",
+      "title": "Placeholder for publication",
+      "authors": ["柳贯一", "测试中文"],
+      "venue": "SIGMOD 2026",
+      "year": 2026,
+      "type": "Conference",
+      "pdf": "#",
+      "code": "#",
+      "abstract": "lalalallala"
+    },
+    {
+      "id": "2",
+      "title": "柳贯一的论文，测试符号",
+      "authors": ["柳贯一", "测试中文"],
+      "venue": "VLDB 2026",
+      "year": 2026,
+      "type": "Conference",
+      "pdf": "#",
+      "code": "#",
+      "abstract": "lalalallala"
+    }
+  ]
+}
