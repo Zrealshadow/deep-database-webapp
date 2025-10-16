@@ -1,180 +1,218 @@
-# Embedding Fusion Dataset Browser
+# Deep Database Web App
 
-A modern, responsive web application for browsing and exploring relational datasets used in graph neural network research and embedding fusion experiments.
+A React + Vite portal for presenting the Deep Database project, including a searchable dataset repository, research modules, publications, and team profiles. All content is data-driven via JSON so the site can be updated without touching the TypeScript code.
 
-## Features
+## Key Features
 
-- **Dataset Catalog**: Browse all available datasets with filtering and search
-- **Detailed Profiles**: View comprehensive information about each dataset including:
-  - Dataset statistics and temporal coverage
-  - Table schemas with foreign key relationships
-  - Prediction tasks with metrics and difficulty ratings
-  - Interactive schema relationship visualization
-- **Responsive Design**: Works seamlessly on desktop, tablet, and mobile devices
-- **Configuration-Based**: Easy to add new datasets by editing JSON configuration files
+- Dataset explorer with search, category filtering, featured badges, and optional source-code links.
+- Rich dataset detail pages with overview metrics, configurable statistics, tabbed schema and task views, and an auto-generated ER diagram.
+- Additional content pages for system modules, publications, and people, each populated from JSON in `public/`.
+- Responsive Tailwind CSS layout with a reusable header/footer and mobile navigation.
+- Lucide icon support across cards, hero sections, and visualization components.
 
-## Getting Started
+## Tech Stack
 
-### Prerequisites
+- React 18 with TypeScript and React Router 6 for routing between Home, Dataset Repository, Module, Publications, and People pages.
+- Vite for local development and builds.
+- Tailwind CSS for utility-first styling.
+- lucide-react for iconography.
 
-- Node.js 18+ and npm
+## Local Development
 
-### Installation
+Prerequisites: Node.js 18+ and npm.
 
 ```bash
 # Install dependencies
 npm install
 
-# Start development server
+# Start the dev server (http://localhost:5173)
 npm run dev
 
-# Build for production
+# Type-check and build for production
 npm run build
 
-# Preview production build
+# Preview the production build
 npm run preview
+
+# Lint the source
+npm run lint
 ```
 
-The application will be available at `http://localhost:5173`
+## Data Sources
 
-## Adding New Datasets
+All runtime data is loaded via `fetch` from static JSON files served by Vite. Update these files to change site content.
 
-To add a new dataset, create two files:
+### Dataset Catalog (`public/datasets/index.json`)
 
-### 1. Update `public/datasets/index.json`
-
-Add your dataset summary to the `datasets` array:
+Each entry in the `datasets` array powers a card in the repository view.
 
 ```json
 {
-  "id": "your-dataset-id",
-  "name": "Your Dataset Name",
-  "category": "Category Name",
-  "description": "Brief description of the dataset",
-  "icon": "IconName",
-  "tags": ["tag1", "tag2"],
-  "featured": false
+  "id": "olist",
+  "name": "Olist Orders",
+  "category": "E-commerce",
+  "description": "Classification tasks over Brazilian e-commerce orders.",
+  "icon": "ShoppingCart",
+  "tags": ["classification", "temporal", "orders"],
+  "featured": true,
+  "code_path": "https://github.com/org/repo/tree/main/examples/olist"
 }
 ```
 
-Available icons from lucide-react: Database, MessageSquare, ShoppingCart, Calendar, etc.
+- `icon` must match a named export from `lucide-react` (defaults to `Database` if omitted).
+- Set `featured` to `true` to highlight a dataset at the top of the catalog.
+- `code_path` is optional and surfaces a “View Implementation Code” link on the card.
 
-### 2. Create `public/datasets/your-dataset-id.json`
+### Dataset Profiles (`public/datasets/<dataset-id>.json`)
 
-Create a detailed profile with this structure:
+Dataset detail pages render from the matching profile file.
 
 ```json
 {
-  "id": "your-dataset-id",
-  "name": "Your Dataset Name",
-  "category": "Category Name",
-  "description": "Detailed description",
-  "source": "Data source",
-  "download_url": "https://...",
-  "num_tables": 5,
-  "total_rows": 1000000,
-  "val_timestamp": "2023-01-01",
-  "test_timestamp": "2023-06-01",
+  "id": "olist",
+  "name": "Olist Orders",
+  "category": "E-commerce",
+  "description": "Detailed overview of Olist order data.",
+  "source": "Kaggle",
+  "download_url": "https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce",
+  "code_path": "https://github.com/org/repo/tree/main/examples/olist",
+  "num_tables": 9,
+  "total_rows": 2000000,
+  "val_timestamp": "2018-06-01",
+  "test_timestamp": "2018-08-01",
   "temporal_coverage": {
-    "start": "2020-01-01",
-    "end": "2023-06-01",
-    "days": 1247
+    "start": "2016-09-01",
+    "end": "2018-09-01",
+    "days": 730
   },
   "tables": [
     {
-      "name": "table_name",
-      "description": "Table description",
-      "num_rows": 10000,
-      "num_columns": 8,
-      "primary_key": "id",
-      "time_column": "created_at",
+      "name": "orders",
+      "description": "Order-level records.",
+      "num_rows": 99441,
+      "num_columns": 10,
+      "primary_key": "order_id",
+      "time_column": "order_purchase_timestamp",
       "foreign_keys": [
-        {
-          "column": "user_id",
-          "references": "users.id"
-        }
+        { "column": "customer_id", "references": "customers.customer_id" }
       ],
-      "sample_columns": ["id", "name", "created_at"]
+      "sample_columns": ["order_id", "customer_id", "order_status"],
+      "augmented": true
     }
   ],
   "tasks": [
     {
-      "id": "task-id",
-      "name": "Task Name",
+      "id": "order_delivered_on_time",
+      "name": "On-time Delivery",
       "task_type": "Binary Classification",
-      "description": "Task description",
-      "entity_table": "table_name",
-      "target_col": "target",
-      "metrics": ["ROC-AUC", "F1-Score"],
+      "description": "Predict whether an order will be delivered on time.",
+      "entity_table": "orders",
+      "target_col": "delivered_on_time",
+      "metrics": ["ROC-AUC", "F1"],
       "difficulty": "Medium",
-      "train_size": 10000,
-      "val_size": 2000,
-      "test_size": 2000
+      "train_size": 80000,
+      "val_size": 10000,
+      "test_size": 9000,
+      "positive_rate": 0.42
     }
   ],
   "statistics": {
-    "custom_stat_1": "value",
-    "custom_stat_2": ["item1", "item2"]
-  }
+    "countries": 1,
+    "delivery_late_rate": "12.3%",
+    "top_categories": ["bed_bath_table", "health_beauty"]
+  },
+  "relationships": [
+    {
+      "from_table": "orders",
+      "from_column": "customer_id",
+      "to_table": "customers",
+      "to_column": "customer_id"
+    }
+  ]
 }
 ```
 
-## Technology Stack
+- `statistics` is displayed as label/value chips in the Overview tab.
+- `relationships` is optional; if omitted, edges are built automatically from `foreign_keys`.
+- The Schema tab includes the `SchemaGraph` list plus an auto-layout ER diagram (`ERDiagramSimple`).
 
-- **React 18** - UI library
-- **TypeScript** - Type safety
-- **Vite** - Build tool
-- **React Router** - Routing
-- **Tailwind CSS** - Styling
-- **Lucide React** - Icons
+### Publications (`public/publications.json`)
+
+The Publications page groups entries by year and type.
+
+```json
+{
+  "publications": [
+    {
+      "id": "paper-2024-gnn",
+      "title": "Temporal Relational Learning with Embedding Fusion",
+      "authors": ["A. Researcher", "B. Scientist"],
+      "venue": "NeurIPS",
+      "year": 2024,
+      "type": "Conference",
+      "pdf": "https://arxiv.org/abs/1234.5678",
+      "code": "https://github.com/org/repo",
+      "abstract": "Short summary of the contribution."
+    }
+  ]
+}
+```
+
+Valid `type` values are `Conference`, `Journal`, `Workshop`, or `Preprint`.
+
+### People Directory (`public/people.json`)
+
+Team member cards are grouped by category.
+
+```json
+{
+  "people": [
+    {
+      "id": "alice",
+      "name": "Alice Smith",
+      "role": "Assistant Professor",
+      "category": "Faculty",
+      "email": "alice@example.edu",
+      "website": "https://alice.example.edu",
+      "interests": ["Relational ML", "Temporal Modeling"],
+      "bio": "Researches database-aware deep learning systems."
+    }
+  ]
+}
+```
+
+Supported categories are `Faculty`, `Research Staff`, `PhD Student`, and `Alumni`. Optional fields (`email`, `website`, `interests`, `image`) are rendered when present.
 
 ## Project Structure
 
 ```
 webapp/
 ├── public/
-│   └── datasets/          # Dataset configuration JSON files
-│       ├── index.json     # Dataset catalog
-│       ├── stack.json     # Dataset profiles
-│       ├── ratebeer.json
-│       └── olist.json
+│   ├── datasets/            # Dataset catalog + per-dataset profiles
+│   ├── people.json          # Team directory
+│   └── publications.json    # Publication list
 ├── src/
-│   ├── components/        # Reusable components
-│   │   ├── DatasetCard.tsx
-│   │   ├── TableCard.tsx
-│   │   ├── TaskCard.tsx
-│   │   └── SchemaGraph.tsx
-│   ├── pages/            # Page components
-│   │   ├── DatasetList.tsx
-│   │   └── DatasetDetail.tsx
-│   ├── types/            # TypeScript types
-│   │   └── dataset.ts
-│   ├── utils/            # Utilities
-│   │   └── datasetLoader.ts
-│   ├── App.tsx           # Main app component
-│   ├── main.tsx          # Entry point
-│   └── index.css         # Global styles
+│   ├── components/          # Header, footer, cards, schema visualizations
+│   ├── pages/               # Route components (Home, DatasetList, DatasetDetail, Module, Publications, People)
+│   ├── types/               # Shared TypeScript definitions
+│   ├── utils/               # Data loaders for JSON content
+│   ├── App.tsx              # Router configuration
+│   └── main.tsx             # App bootstrap
 ├── index.html
 ├── package.json
+├── tailwind.config.js
+├── postcss.config.js
 ├── tsconfig.json
-├── vite.config.ts
-└── tailwind.config.js
+└── vite.config.ts
 ```
 
-## Customization
+## Customization Notes
 
-### Styling
-
-The app uses Tailwind CSS. Modify `tailwind.config.js` to customize colors, fonts, and other design tokens.
-
-### Adding Features
-
-The codebase is structured to be easily extensible:
-- Add new components in `src/components/`
-- Add new pages in `src/pages/`
-- Update types in `src/types/dataset.ts`
-- Add utility functions in `src/utils/`
+- Tailwind theme tokens (colors, fonts, spacing) live in `tailwind.config.js`.
+- To adjust navigation or branding, edit `src/components/Header.tsx` and `src/components/Footer.tsx`.
+- The architecture diagram and explanatory copy are defined in `src/pages/Module.tsx`.
+- Replace placeholder entries in `public/people.json` and `public/publications.json` with real content before publishing.
 
 ## License
 
-This project is part of the Embedding Fusion research project.
+This project is part of the Embedding Fusion research initiative.
