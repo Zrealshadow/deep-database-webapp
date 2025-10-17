@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  webapp:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: embedding-fusion-webapp
+    ports:
+      - "4033:80"
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+    networks:
+      - webapp-network
+
+  # Uncomment if you have a backend API service
+  # backend:
+  #   image: your-backend-image:latest
+  #   container_name: embedding-fusion-backend
+  #   ports:
+  #     - "5000:5000"
+  #   restart: unless-stopped
+  #   networks:
+  #     - webapp-network
+
+networks:
+  webapp-network:
+    driver: bridge

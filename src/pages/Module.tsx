@@ -392,7 +392,7 @@ export const Module: React.FC = () => {
                             </a>
                             <a href="https://ieeexplore.ieee.org/document/7344858" target="_blank" rel="noopener noreferrer"
                               className="inline-flex items-center text-xs bg-white px-2 py-1 rounded border border-orange-300 text-orange-700 hover:bg-orange-100">
-                              📄 Paper
+                              📄 DSAA 2015
                             </a>
                           </div>
                         </div>
@@ -410,7 +410,7 @@ export const Module: React.FC = () => {
                             </a>
                             <a href="https://dl.acm.org/doi/10.1145/3514221.3517891" target="_blank" rel="noopener noreferrer"
                               className="inline-flex items-center text-xs bg-white px-2 py-1 rounded border border-orange-300 text-orange-700 hover:bg-orange-100">
-                              📄 Paper
+                              📄 SIGMOD 2022 
                             </a>
                           </div>
                         </div>
@@ -423,7 +423,7 @@ export const Module: React.FC = () => {
                           <div className="flex flex-wrap gap-2 mt-2">
                             <a href="https://dl.acm.org/doi/10.14778/3397230.3397235" target="_blank" rel="noopener noreferrer"
                               className="inline-flex items-center text-xs bg-white px-2 py-1 rounded border border-orange-300 text-orange-700 hover:bg-orange-100">
-                              📄 Paper
+                              📄 VLDB 2020
                             </a>
                           </div>
                         </div>
